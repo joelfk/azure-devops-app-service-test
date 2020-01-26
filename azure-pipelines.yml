@@ -1,5 +1,8 @@
-trigger: none
-pr: none
+trigger:
+  - master
+
+pr:
+  - master
 
 pool:
   vmImage: 'windows-latest'
@@ -22,6 +25,7 @@ stages:
           command: 'test'
           projects: 'AppServiceTestApi.sln'
       - task: DotNetCoreCLI@2
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         name: 'Publish'
         inputs:
           command: publish
@@ -29,6 +33,7 @@ stages:
           arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
           zipAfterPublish: true
       - task: PublishBuildArtifacts@1
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'buildArtifact'
@@ -36,6 +41,7 @@ stages:
 
  - stage: Deploy
    displayName: Deploy
+   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
    jobs:
     - deployment: DeployWeb
       displayName: deploy Web App
