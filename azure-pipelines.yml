@@ -4,14 +4,21 @@ pr: none
 pool:
   vmImage: 'windows-latest'
 
-steps:
-- task: DotNetCoreCLI@2
-  name: 'Build'
-  inputs:
-    command: 'build'
-    projects: 'AppServiceTestApi.sln'
-- task: DotNetCoreCLI@2
-  name: 'Test'
-  inputs:
-    command: 'test'
-    projects: 'AppServiceTestApi.sln'
+stages:
+ - stage: CreateDeploymentArtifacts
+   displayName: Create Deployment Artifacts
+   jobs:
+    - job: CreateDeploymentArtifacts
+      displayName: Create Deployment Artifacts
+      steps:
+      - task: DotNetCoreCLI@2
+        name: 'Build'
+        inputs:
+          command: 'build'
+          projects: 'AppServiceTestApi.sln'
+
+      - task: DotNetCoreCLI@2
+        name: 'Test'
+        inputs:
+          command: 'test'
+          projects: 'AppServiceTestApi.sln'
