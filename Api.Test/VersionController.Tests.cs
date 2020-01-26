@@ -12,7 +12,7 @@ namespace Api.Test
             {
                 var controller = new VersionController();
 
-                Assert.Equal("1.0.0.0", controller.GetVersion());
+                Assert.Equal("1.0.0.1", controller.GetVersion());
             }
         }
     }
