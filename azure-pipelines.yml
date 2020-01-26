@@ -16,9 +16,13 @@ stages:
         inputs:
           command: 'build'
           projects: 'AppServiceTestApi.sln'
-
       - task: DotNetCoreCLI@2
         name: 'Test'
         inputs:
           command: 'test'
           projects: 'AppServiceTestApi.sln'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'buildArtifact'
+          publishLocation: 'Container'
