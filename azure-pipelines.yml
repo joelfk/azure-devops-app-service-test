@@ -21,6 +21,13 @@ stages:
         inputs:
           command: 'test'
           projects: 'AppServiceTestApi.sln'
+      - task: DotNetCoreCLI@2
+        name: 'Publish'
+        inputs:
+          command: publish
+          publishWebProjects: true
+          arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+          zipAfterPublish: true
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
