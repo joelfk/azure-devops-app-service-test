@@ -33,3 +33,21 @@ stages:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'buildArtifact'
           publishLocation: 'Container'
+
+ - stage: Deploy
+   displayName: Deploy
+   jobs:
+    - deployment: DeployWeb
+      displayName: deploy Web App
+      environment: 'app-service-test'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+             - task: DownloadBuildArtifacts@0
+               inputs:
+                 buildType: 'current'
+                 downloadType: 'single'
+                 artifactName: 'buildArtifact'
+                 downloadPath: '$(System.ArtifactsDirectory)'
+
