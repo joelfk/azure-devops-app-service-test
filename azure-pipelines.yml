@@ -56,13 +56,13 @@ stages:
           condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
           inputs:
             command: 'custom'
-            customCommand: 'run build --prod --output-path=$(Build.ArtifactStagingDirectory)'
+            customCommand: 'run build --prod'
             workingDir: './Client'
         - task: PublishBuildArtifacts@1
           name: 'SaveArtifact'
           condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
           inputs:
-            pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            pathtoPublish: '$(Build.SourcesDirectory)/Client/dist/client'
             artifactName: angularBuildArtifact
     - job: PublishDeploymentArtifacts
       displayName: Publish Deployment Artifacts
