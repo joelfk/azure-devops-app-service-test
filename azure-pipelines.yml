@@ -116,8 +116,7 @@ stages:
    jobs:
     - deployment: DeployWeb
       displayName: Deploy Web App
-      environment:
-        name: 'aa'
+      environment: '$(test-app-service-test-environment-name)'
       strategy:
         runOnce:
           deploy:
