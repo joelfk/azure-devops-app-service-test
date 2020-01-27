@@ -11,33 +11,49 @@ stages:
  - stage: CreateDeploymentArtifacts
    displayName: Create Deployment Artifacts
    jobs:
-    - job: CreateDeploymentArtifacts
-      displayName: Create Deployment Artifacts
+    - job: CreateApiDeploymentArtifacts
+      displayName: Create API Deployment Artifacts
       steps:
-      - task: DotNetCoreCLI@2
-        name: 'Build'
-        inputs:
-          command: 'build'
-          projects: 'AppServiceTestApi.sln'
-      - task: DotNetCoreCLI@2
-        name: 'Test'
-        inputs:
-          command: 'test'
-          projects: 'AppServiceTestApi.sln'
-      - task: DotNetCoreCLI@2
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        name: 'Publish'
-        inputs:
-          command: publish
-          publishWebProjects: true
-          arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
-          zipAfterPublish: true
-      - task: PublishBuildArtifacts@1
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: 'buildArtifact'
-          publishLocation: 'Container'
+        - task: DotNetCoreCLI@2
+          name: 'Build'
+          inputs:
+            command: 'build'
+            projects: 'AppServiceTestApi.sln'
+        - task: DotNetCoreCLI@2
+          name: 'Test'
+          inputs:
+            command: 'test'
+            projects: 'AppServiceTestApi.sln'
+        - task: DotNetCoreCLI@2
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+          name: 'Publish'
+          inputs:
+            command: publish
+            publishWebProjects: true
+            arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+            zipAfterPublish: true
+    - job: CreateAngularDeploymentArtifacts
+      displayName: Create Angular Deployment Artifacts
+      steps:
+        - task: Npm@1
+          inputs:
+            command: 'install'
+        - task: Npm@1
+          inputs:
+            command: 'custom'
+            customCommand: 'build --prod'
+    - job: PublishDeploymentArtifacts
+      displayName: Publish Deployment Artifacts
+      dependsOn:
+        - CreateApiDeploymentArtifacts
+        - CreateAngularDeploymentArtifacts
+      steps:
+        - task: PublishBuildArtifacts@1
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'buildArtifact'
+            publishLocation: 'Container'
 
  - stage: Deploy
    displayName: Deploy
