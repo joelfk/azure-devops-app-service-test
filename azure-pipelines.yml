@@ -60,7 +60,7 @@ stages:
             workingDir: './Client'
         - task: PublishBuildArtifacts@1
           name: 'SaveArtifact'
-          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
           inputs:
             pathtoPublish: '$(Build.ArtifactStagingDirectory)'
             artifactName: angularBuildArtifact
