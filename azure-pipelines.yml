@@ -47,12 +47,6 @@ stages:
             customCommand: 'run lint'
             workingDir: './Client'
         - task: Npm@1
-          name: 'Test'
-          inputs:
-            command: 'custom'
-            customCommand: 'run test'
-            workingDir: './Client'
-        - task: Npm@1
           name: 'Publish'
           inputs:
             command: 'custom'
