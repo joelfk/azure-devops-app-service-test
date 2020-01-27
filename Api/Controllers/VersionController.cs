@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
@@ -9,7 +9,7 @@ namespace Api.Controllers
         [HttpGet]
         public string GetVersion()
         {
-            return "1.0.0.1";
+            return "1.0.0.2";
         }
     }
 }
