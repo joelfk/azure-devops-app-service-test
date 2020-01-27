@@ -31,7 +31,12 @@ stages:
             command: publish
             publishWebProjects: true
             arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
-            zipAfterPublish: true
+        - task: PublishBuildArtifacts@1
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
+          name: 'SaveArtifact'
+          inputs:
+            pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            artifactName: apiBuildArtifact
     - job: CreateAngularDeploymentArtifacts
       displayName: Create Angular Deployment Artifacts
       steps:
@@ -48,20 +53,47 @@ stages:
             workingDir: './Client'
         - task: Npm@1
           name: 'Publish'
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
           inputs:
             command: 'custom'
-            customCommand: 'run build --prod --output-path=$(Build.ArtifactStagingDirectory)/wwwroot'
+            customCommand: 'run build --prod --output-path=$(Build.ArtifactStagingDirectory)'
             workingDir: './Client'
+        - task: PublishBuildArtifacts@1
+          name: 'SaveArtifact'
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
+          inputs:
+            pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            artifactName: angularBuildArtifact
     - job: PublishDeploymentArtifacts
       displayName: Publish Deployment Artifacts
       dependsOn:
         - CreateApiDeploymentArtifacts
         - CreateAngularDeploymentArtifacts
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
       steps:
-        - task: PublishBuildArtifacts@1
-          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        - task: DownloadBuildArtifacts@0
+          name: 'DownloadApiBuildArtifacts'
           inputs:
-            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'apiBuildArtifact'
+            downloadPath: '$(Build.ArtifactStagingDirectory)'
+        - task: DownloadBuildArtifacts@0
+          name: 'DownloadAngularBuildArtifacts'
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'angularBuildArtifact'
+            downloadPath: '$(Build.ArtifactStagingDirectory)/wwwroot'
+        - task: ArchiveFiles@2
+          name: 'Zip'
+          inputs:
+           rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+           archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        - task: PublishBuildArtifacts@1
+          name: 'Publish'
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
             ArtifactName: 'buildArtifact'
             publishLocation: 'Container'
 
