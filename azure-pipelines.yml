@@ -41,10 +41,22 @@ stages:
             command: 'install'
             workingDir: './Client'
         - task: Npm@1
-          name: 'Build'
+          name: 'Lint'
           inputs:
             command: 'custom'
-            customCommand: 'run build --prod'
+            customCommand: 'run lint'
+            workingDir: './Client'
+        - task: Npm@1
+          name: 'Test'
+          inputs:
+            command: 'custom'
+            customCommand: 'run test'
+            workingDir: './Client'
+        - task: Npm@1
+          name: 'Publish'
+          inputs:
+            command: 'custom'
+            customCommand: 'run build --prod --output-path=$(Build.ArtifactStagingDirectory)/wwwroot'
             workingDir: './Client'
     - job: PublishDeploymentArtifacts
       displayName: Publish Deployment Artifacts
