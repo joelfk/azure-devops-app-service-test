@@ -127,4 +127,4 @@ stages:
                  azureSubscription: 'deploy-test-app-service'
                  appType: 'webApp'
                  WebAppName: 'joel-test-app-service-1'
-                 package: '$(System.ArtifactsDirectory)/**/*.zip'
+                 package: '$(System.ArtifactsDirectory)/**/$(Build.BuildId).zip'
