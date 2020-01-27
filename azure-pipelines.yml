@@ -36,12 +36,16 @@ stages:
       displayName: Create Angular Deployment Artifacts
       steps:
         - task: Npm@1
+          name: 'InstallDependencies'
           inputs:
             command: 'install'
+            workingDir: './Client'
         - task: Npm@1
+          name: 'Build'
           inputs:
             command: 'custom'
             customCommand: 'build --prod'
+            workingDir: './Client'
     - job: PublishDeploymentArtifacts
       displayName: Publish Deployment Artifacts
       dependsOn:
