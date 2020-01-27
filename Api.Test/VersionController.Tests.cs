@@ -1,4 +1,4 @@
-﻿using Api.Controllers;
+using Api.Controllers;
 using Xunit;
 
 namespace Api.Test
@@ -12,7 +12,7 @@ namespace Api.Test
             {
                 var controller = new VersionController();
 
-                Assert.Equal("1.0.0.1", controller.GetVersion());
+                Assert.Equal("1.0.0.2", controller.GetVersion());
             }
         }
     }
